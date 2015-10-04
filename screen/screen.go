@@ -1,7 +1,7 @@
 package screen
 
 import (
-	"github.com/go-gl/gl/v4.5-core/gl"
+	//"github.com/go-gl/gl/v4.5-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 )
 
@@ -10,7 +10,6 @@ const SCREEN_HEIGHT int = 320
 
 type Screen struct {
 	title string
-	display Display
 }
 
 func (screen *Screen) Init(title string) {
@@ -19,34 +18,20 @@ func (screen *Screen) Init(title string) {
 	err = glfw.Init()
 
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	glfw.OpenWindowHint(glfw.WindowNoResize, 1)
-	err = glfw.OpenWindow(SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 0, 0, 0, glfw.Windowed)
+	window, err := glfw.CreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, title, nil, nil)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	glfw.SetWindowTitle(title)
-	desktopMode := glfw.DesktopMode()
-	glfw.SetWindowPos((desktopMode.W-SCREEN_WIDTH)/2, (desktopMode.H-SCREEN_HEIGHT)/2)
+	window.MakeContextCurrent()
 
-	gl.ClearColor(0.255, 0.255, 0.255, 0)
+	for !window.ShouldClose() {
+		// Do OpenGL stuff
+		window.SwapBuffers()
+		glfw.PollEvents()
+	}
 
-	glfw.SetKeyCallback(func(key, state int) {
-		if state == glfw.KeyPress {
-			//i.KeyHandler.KeyDown(key)
-		} else {
-			//i.KeyHandler.KeyUp(key)
-		}
-	})
-
-	glfw.SetWindowCloseCallback(func() int {
-		glfw.CloseWindow()
-		glfw.Terminate()
-		return 0
-	})
-
-	return nil
 }

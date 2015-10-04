@@ -46,7 +46,8 @@ func main() {
 
 	chip.LoadRom(romPath)
 	display := new(screen.Screen)
-	display.Init()
+	
+	go display.Init("Chip8")
 
 
 	// Emulation Loop
