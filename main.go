@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"flag"
-	"tysondecker.com/tdecker/chip8/chip8"
-	"tysondecker.com/tdecker/chip8/screen"
+	"github.com/tdecker91/go-chip8/chip8"
+	"github.com/tdecker91/go-chip8/screen"
 )
 
 /**
@@ -39,6 +40,26 @@ func parseArgs() string {
 
 }
 
+func onClose() {
+	fmt.Println("EXITING!!!")
+	os.Exit(0)
+}
+
+func emulate(chip *chip8.Chip8) {
+	// Emulation Loop
+	for chip.Running {
+		
+		chip.EmulateCycle()
+
+		if chip.DrawFlag {
+			//chip.DumpScreen()
+		}
+
+		// Store keypress...
+
+	}
+}
+
 func main() {
 
 	romPath := parseArgs()
@@ -46,20 +67,11 @@ func main() {
 
 	chip.LoadRom(romPath)
 	display := new(screen.Screen)
-	
-	go display.Init("Chip8")
+
+	go emulate(chip)
+
+	runtime.LockOSThread()
+	display.Init("Chip8", onClose, chip)
 
 
-	// Emulation Loop
-	for chip.Running {
-		
-		chip.EmulateCycle()
-
-		if chip.DrawFlag {
-			chip.DumpScreen()
-		}
-
-		// Store keypress...
-
-	}
 }

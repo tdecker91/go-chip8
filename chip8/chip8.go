@@ -36,7 +36,7 @@ type Chip8 struct {
 	registers [16]byte	// V-regs (V0 - VF)
 	index int			// Index Register
 	pc int				// Program Counter
-	gfx [64 * 32]byte	// Graphics Memory (2048 pixels)
+	Gfx [64 * 32]byte	// Graphics Memory (2048 pixels)
 	
 	stack [16]int		// Stack (16 levels)
 	sp int				// Stack Pointer
@@ -117,7 +117,7 @@ func (chip *Chip8) EmulateCycle() {
 
 	if chip.soundTimer > 0 {
 		if chip.soundTimer == 1 {
-			fmt.Println("BEEP!")
+			//fmt.Println("BEEP!")
 		}
 
 		chip.soundTimer--
@@ -131,7 +131,7 @@ func (chip *Chip8) DumpScreen() {
 
 	for i := 0; i < 32; i++ {
 		for j := 0; j < 64; j++ {
-			if(chip.gfx[i*64 +j] == 1) {
+			if(chip.Gfx[i*64 +j] == 1) {
 				screen += "X"
 			} else {
 				screen += " "
@@ -173,7 +173,7 @@ func hex00(chip *Chip8, opcode uint16) {
 	switch opcode & 0x000F {
 		case 0x0000: // Clears the screen
 			for i := 0; i < 2048; i++ {
-				chip.gfx[i] = 0
+				chip.Gfx[i] = 0
 			}
 			chip.DrawFlag = true
 			chip.pc += 2
@@ -334,10 +334,10 @@ func hexD0(chip *Chip8, opcode uint16) {
 		pixel = uint16(chip.memory[chip.index + yline])
 		for xline := 0; xline < 8; xline++ {
 			if pixel & (0x80 >> uint(xline)) != 0 {
-				if chip.gfx[(x + xline + ((y + yline) * 64))] == 1 {
+				if chip.Gfx[(x + xline + ((y + yline) * 64))] == 1 {
 					chip.registers[0xF] = 1
 				}
-				chip.gfx[x + xline + ((y + yline) * 64)] ^= 1
+				chip.Gfx[x + xline + ((y + yline) * 64)] ^= 1
 			}
 		}
 	}
